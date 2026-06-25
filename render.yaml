@@ -1,0 +1,27 @@
+services:
+  # C++ Socket Server (TCP/UDP listener + WebSocket bridge)
+  - type: web
+    name: socket-backend
+    env: docker
+    repo: https://github.com/amar2796/socket-backend
+    dockerfilePath: Dockerfile
+    plan: free
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: BIND_IP
+        value: 0.0.0.0
+
+  # Static frontend (served via Caddy)
+  - type: web
+    name: socket-frontend
+    env: docker
+    repo: https://github.com/amar2796/socket-frontend
+    dockerfilePath: Dockerfile
+    plan: free
+    envVars:
+      # Explicit instead of relying on Render's port auto-detection, which
+      # the previous Dockerfile needed (it ignored $PORT and hardcoded :80).
+      # The fixed Dockerfile now reads this value at container start.
+      - key: PORT
+        value: 8080
